@@ -2,22 +2,29 @@ const { Client, GatewayIntentBits } = require('discord.js');
 require('dotenv').config();
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ]
 });
 
-const TARGET_CHANNEL_ID = process.env.TARGET_CHANNEL_ID;
+const TARGET_CHANNEL_IDS = process.env.TARGET_CHANNEL_IDS.split(',');
+
+const USER_MESSAGE_DELETE_DELAY = 1000; // 1 second
+const BOT_MESSAGE_DELETE_DELAY = 5000;  // 5 seconds
 
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
 client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
+  if (TARGET_CHANNEL_IDS.includes(message.channel.id)) {
+    const delay = message.author.bot ? BOT_MESSAGE_DELETE_DELAY : USER_MESSAGE_DELETE_DELAY;
 
-  if (message.channel.id === TARGET_CHANNEL_ID) {
     setTimeout(() => {
       message.delete().catch(console.error);
-    }, 1000); 
+    }, delay);
   }
 });
 
