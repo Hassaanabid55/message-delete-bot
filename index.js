@@ -14,8 +14,14 @@ const TARGET_CHANNEL_IDS = process.env.TARGET_CHANNEL_IDS.split(',');
 const USER_MESSAGE_DELETE_DELAY = 1000; // 1 second
 const BOT_MESSAGE_DELETE_DELAY = 5000;  // 5 seconds
 
-client.once('ready', () => {
+client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}`);
+  try {
+    await client.user.setStatus('invisible'); // <- Force invisibility
+    console.log('Bot status set to invisible.');
+  } catch (err) {
+    console.error('Failed to set status:', err);
+  }
 });
 
 client.on('messageCreate', async (message) => {
